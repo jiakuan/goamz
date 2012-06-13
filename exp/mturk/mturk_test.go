@@ -22,10 +22,8 @@ func (s *S) SetUpSuite(c *C) {
 		panic(err.Error())
 	}
 
-	s.mturk = &mturk.MTurk{
-		Auth: auth,
-		URL:  u,
-	}
+	s.mturk = mturk.New(auth)
+	s.mturk.URL = u
 }
 
 func (s *S) TestCreateHIT(c *C) {

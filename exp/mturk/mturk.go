@@ -27,11 +27,24 @@ import (
 
 type MTurk struct {
 	aws.Auth
-	URL *url.URL
+	URL    *url.URL
+	client *http.Client
 }
 
 func New(auth aws.Auth) *MTurk {
-	mt := &MTurk{Auth: auth}
+	mt := &MTurk{Auth: auth, client: http.DefaultClient}
+	var err error
+	mt.URL, err = url.Parse("http://mechanicalturk.amazonaws.com/")
+	if err != nil {
+		panic(err.Error())
+	}
+	return mt
+}
+
+// MTurkWitClient creates a new MTurk which performs http requets with
+// a specified http.Client
+func MTurkWithClient(auth aws.Auth, client *http.Client) *MTurk {
+	mt := &MTurk{Auth: auth, client: client}
 	var err error
 	mt.URL, err = url.Parse("http://mechanicalturk.amazonaws.com/")
 	if err != nil {
@@ -247,7 +260,7 @@ func (mt *MTurk) query(params map[string]string, operation string, resp interfac
 
 	sign(mt.Auth, service, operation, timestamp, params)
 	url.RawQuery = multimap(params).Encode()
-	r, err := http.Get(url.String())
+	r, err := mt.client.Get(url.String())
 	if err != nil {
 		return err
 	}

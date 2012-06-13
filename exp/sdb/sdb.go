@@ -37,12 +37,18 @@ const debug = false
 type SDB struct {
 	aws.Auth
 	aws.Region
-	private byte // Reserve the right of using private data.
+	client *http.Client
 }
 
 // New creates a new SDB.
 func New(auth aws.Auth, region aws.Region) *SDB {
-	return &SDB{auth, region, 0}
+	return &SDB{auth, region, http.DefaultClient}
+}
+
+// SDBWithClient creates a new SDB which performs http requets with a
+// specified http.Client
+func SDBWithClient(auth aws.Auth, region aws.Region, client *http.Client) *SDB {
+	return &SDB{auth, region, client}
 }
 
 // The Domain type represents a collection of items that are described
@@ -384,7 +390,7 @@ func (sdb *SDB) query(domain *Domain, item *Item, params url.Values, headers htt
 		delete(headers, "Content-Length")
 	}
 
-	r, err := http.DefaultClient.Do(&req)
+	r, err := sdb.client.Do(&req)
 	if err != nil {
 		return err
 	}

@@ -32,7 +32,7 @@ const debug = false
 type S3 struct {
 	aws.Auth
 	aws.Region
-	private byte // Reserve the right of using private data.
+	client *http.Client
 }
 
 // The Bucket type encapsulates operations with an S3 bucket.
@@ -49,7 +49,13 @@ type Owner struct {
 
 // New creates a new S3.
 func New(auth aws.Auth, region aws.Region) *S3 {
-	return &S3{auth, region, 0}
+	return &S3{auth, region, http.DefaultClient}
+}
+
+// S3WithClient creates a new S3 which performs http requets with a
+// specified http.Client
+func S3WithClient(auth aws.Auth, region aws.Region, client *http.Client) *S3 {
+	return &S3{auth, region, client}
 }
 
 // Bucket returns a Bucket with the given name.
@@ -421,7 +427,7 @@ func (s3 *S3) run(req *request, resp interface{}) (*http.Response, error) {
 		hreq.Body = ioutil.NopCloser(req.payload)
 	}
 
-	hresp, err := http.DefaultClient.Do(&hreq)
+	hresp, err := s3.client.Do(&hreq)
 	if err != nil {
 		return nil, err
 	}

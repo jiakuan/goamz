@@ -38,7 +38,7 @@ import (
 type SNS struct {
 	aws.Auth
 	aws.Region
-	private byte // Reserve the right of using private data.
+	client *http.Client
 }
 
 type Topic struct {
@@ -47,7 +47,13 @@ type Topic struct {
 }
 
 func New(auth aws.Auth, region aws.Region) *SNS {
-	return &SNS{auth, region, 0}
+	return &SNS{auth, region, http.DefaultClient}
+}
+
+// SNSWithClient creates a new SNS which performs http requets with a
+// specified http.Client
+func SNSWithClient(auth aws.Auth, region aws.Region, client *http.Client) *SNS {
+	return &SNS{auth, region, client}
 }
 
 type Message struct {
@@ -403,7 +409,7 @@ func (sns *SNS) query(topic *Topic, message *Message, params map[string]string, 
 
 	sign(sns.Auth, "GET", "/", params, u.Host)
 	u.RawQuery = multimap(params).Encode()
-	r, err := http.Get(u.String())
+	r, err := sns.client.Get(u.String())
 	if err != nil {
 		return err
 	}

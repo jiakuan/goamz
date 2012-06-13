@@ -31,12 +31,18 @@ const debug = false
 type EC2 struct {
 	aws.Auth
 	aws.Region
-	private byte // Reserve the right of using private data.
+	client *http.Client
 }
 
 // New creates a new EC2.
 func New(auth aws.Auth, region aws.Region) *EC2 {
-	return &EC2{auth, region, 0}
+	return &EC2{auth, region, http.DefaultClient}
+}
+
+// EC2WithClient creates a new EC2 which performs http requets with a
+// specified http.Client
+func EC2WithClient(auth aws.Auth, region aws.Region, client *http.Client) *EC2 {
+	return &EC2{auth, region, client}
 }
 
 // ----------------------------------------------------------------------------
@@ -128,7 +134,7 @@ func (ec2 *EC2) query(params map[string]string, resp interface{}) error {
 	if debug {
 		log.Printf("get { %v } -> {\n", endpoint.String())
 	}
-	r, err := http.Get(endpoint.String())
+	r, err := ec2.client.Get(endpoint.String())
 	if err != nil {
 		return err
 	}
