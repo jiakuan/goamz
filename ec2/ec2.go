@@ -15,7 +15,7 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"fmt"
-	"launchpad.net/goamz/aws"
+	"github.com/jiakuan/goamz/aws"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -92,7 +92,7 @@ func (f *Filter) addParams(params map[string]string) {
 // ----------------------------------------------------------------------------
 // Request dispatching logic.
 
-// Error encapsulates an error returned by EC2. 
+// Error encapsulates an error returned by EC2.
 //
 // See http://goo.gl/VZGuC for more details.
 type Error struct {
@@ -454,7 +454,7 @@ type SecurityGroupsResp struct {
 	Groups    []SecurityGroupInfo `xml:"securityGroupInfo>item"`
 }
 
-// SecurityGroup encapsulates details for a security group in EC2. 
+// SecurityGroup encapsulates details for a security group in EC2.
 //
 // See http://goo.gl/CIdyP for more details.
 type SecurityGroupInfo struct {
@@ -619,7 +619,7 @@ type Tag struct {
 }
 
 // CreateTags adds or overwrites one or more tags for the specified instance ids.
-// 
+//
 // See http://goo.gl/Vmkqc for more details
 func (ec2 *EC2) CreateTags(instIds []string, tags []Tag) (resp *SimpleResp, err error) {
 

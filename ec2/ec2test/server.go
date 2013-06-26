@@ -8,8 +8,8 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
+	"github.com/jiakuan/goamz/ec2"
 	"io"
-	"launchpad.net/goamz/ec2"
 	"net"
 	"net/http"
 	"net/url"
@@ -397,7 +397,7 @@ func (srv *Server) runInstances(w http.ResponseWriter, req *http.Request, reqId 
 	//	AvailZone             	?
 	//	GroupName             	tag
 	//	Monitoring            	ignore?
-	//	SubnetId           		?   	
+	//	SubnetId           		?
 	//	DisableAPITermination bool
 	//	ShutdownBehavior      string
 	//	PrivateIPAddress      string

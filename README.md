@@ -25,7 +25,7 @@ Just import the library into your source code, and it's ready to use.
 
 ```
 import (
-  "github.com/jiakuan/goamz/aws"
+  "launchpad.net/goamz/aws"
   "github.com/jiakuan/goamz/ec2"
 )
 ```
